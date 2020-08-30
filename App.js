@@ -39,15 +39,23 @@ export default function App(props) {
     }
   );
 
-  const authContext = React.useMemo(
-    () => ({
-      setFirstTime: (data) => {
-        dispatch({ type: 'FIRST_TIME', data });
-      },
-    }),
-    []
-  );
+  const setFirstTime = (data) => {
+    dispatch({ type: 'FIRST_TIME', data });
+  };
 
+  // const authContext = React.useMemo(
+  //   () => ({
+  //     signIn: async data => {
+  //       // In a production app, we need to send some data (usually username, password) to server and get a token
+  //       // We will also need to handle errors if sign in failed
+  //       // After getting token, we need to persist the token using `AsyncStorage`
+  //       // In the example, we'll use a dummy token
+
+  //       dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+  //     },
+  //   }),
+  //   []
+  // );
 
   const performAPICalls = async () => {};
   const downloadAssets = async () => {};
@@ -66,7 +74,7 @@ export default function App(props) {
     return null;
   }
   return (
-    <AuthContext.Provider value={authContext}>
+    <AuthContext.Provider value={setFirstTime}>
       <SafeAreaProvider>
         <Navigation firstTime={state.isFirstTime}/>
       </SafeAreaProvider>

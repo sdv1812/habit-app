@@ -14,7 +14,7 @@ import AuthContext from '../components/AuthContext';
 
 const TimeOfNotificationScreen = () => {
 
-    const { setFirstTime } = React.useContext(AuthContext);
+    const setFirstTime = React.useContext(AuthContext);
 
     const onPress = () => {
         setFirstTime(false);
