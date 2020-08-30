@@ -1,20 +1,83 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useState, useEffect, useReducer } from 'react';
+import { StyleSheet, View, Image } from 'react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { 
+  useFonts,
+  Lato_400Regular,
+  Lato_400Regular_Italic,
+  Lato_700Bold,
+  Lato_700Bold_Italic,
+} from '@expo-google-fonts/lato';
+import * as SplashScreen from 'expo-splash-screen';
+import { MediumText } from './src/components/common';
+import Colors from './src/config/Colors';
+import Navigation from './src/components/Navigation';
+import AuthContext from './src/components/AuthContext';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+export default function App(props) {
+  let [isAppReady, setAppReady] = useState(false);
+  let [fontsLoaded] = useFonts({
+    Lato_400Regular,
+    Lato_400Regular_Italic,
+    Lato_700Bold,
+    Lato_700Bold_Italic,
+  });
+
+  const [state, dispatch] = useReducer(
+    (prevState, action) => {
+      switch (action.type) {
+        case 'FIRST_TIME':
+          return {
+            ...prevState,
+            isFirstTime: action.data,
+          };
+      }
+    },
+    {
+      isFirstTime: true,
+    }
   );
+
+  const authContext = React.useMemo(
+    () => ({
+      setFirstTime: (data) => {
+        dispatch({ type: 'FIRST_TIME', data });
+      },
+    }),
+    []
+  );
+
+
+  const performAPICalls = async () => {};
+  const downloadAssets = async () => {};
+  useEffect(() => {
+    async function loadAssets() {
+      await SplashScreen.preventAutoHideAsync();
+      await performAPICalls();
+      await downloadAssets();
+      SplashScreen.hideAsync();
+      setAppReady(true);
+    }
+    loadAssets();
+  }, []);
+
+  if (!isAppReady || !fontsLoaded) {
+    return null;
+  }
+  return (
+    <AuthContext.Provider value={authContext}>
+      <SafeAreaProvider>
+        <Navigation firstTime={state.isFirstTime}/>
+      </SafeAreaProvider>
+    </AuthContext.Provider>
+  ); 
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.backgroundColor,
     alignItems: 'center',
     justifyContent: 'center',
   },
